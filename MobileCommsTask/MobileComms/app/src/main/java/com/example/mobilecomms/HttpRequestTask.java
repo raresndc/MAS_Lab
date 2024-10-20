@@ -148,7 +148,6 @@ public class HttpRequestTask extends AsyncTask<String, Void, String> {
         }
     }
 
-
     private String getPublicKey(String server, String apiCall) {
         StringBuilder result = new StringBuilder();
         try {
@@ -177,5 +176,4 @@ public class HttpRequestTask extends AsyncTask<String, Void, String> {
         }
         return result.toString();
     }
-
 }

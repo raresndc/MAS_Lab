@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private SecretKey secretKey;
     private EditText etMsg;
     private IvParameterSpec ivParameterSpec;
+    private TextView resultTextView;
 
     PrivateKey privateKey;
     @SuppressLint("StaticFieldLeak")
@@ -51,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        resultTextView = findViewById(R.id.resultTextView);
+//        new GetPublicKeyTask().execute(server, apiCall);
 
         etMsg = findViewById(R.id.etMsg);
         KeyPairGenerator kpg = null;
@@ -67,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
             throw new RuntimeException(e);
         }
     }
+
+
     public void sendPublicKey(View view) {
         try {
             byte[] encoded = Base64.encode(publicKey.getEncoded(), Base64.DEFAULT);
@@ -99,8 +106,6 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
         new Handler().postDelayed(() -> button.setEnabled(true), 2000);
     }
-
-
 
     @Override
     public void receivePublicKey(String encodedKey) {
