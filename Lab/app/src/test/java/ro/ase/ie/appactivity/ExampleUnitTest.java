@@ -1,4 +1,4 @@
-package com.example.semmas;
+package ro.ase.ie.appactivity;
 
 import org.junit.Test;
 
