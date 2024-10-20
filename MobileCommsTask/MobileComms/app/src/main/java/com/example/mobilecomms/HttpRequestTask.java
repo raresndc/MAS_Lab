@@ -46,9 +46,13 @@ public class HttpRequestTask extends AsyncTask<String, Void, String> {
             case ApiEndPoints.SEND_MESSAGE:
                 result = sendMessage(server, apiCall);
                 break;
+            case ApiEndPoints.GET_PUBLIC_KEY:
+                result = getPublicKey(server, apiCall);
+                break;
         }
         return result;
     }
+
 
     private String sendMessage(String server, String apiCall) {
         StringBuilder result = new StringBuilder();
@@ -137,12 +141,40 @@ public class HttpRequestTask extends AsyncTask<String, Void, String> {
     @SuppressLint("StaticFieldLeak")
     @Override
     public void onPostExecute(String result) {
-       try {
-            if (result != null && result != "") {
-                Log.d("TAG", "OnPostExecute result value: " + result);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        super.onPostExecute(result);
+        if (result != null && !result.isEmpty()) {
+            Log.d("TAG", "OnPostExecute result value: " + result);
+            parentCallback.receivePublicKey(result);
         }
     }
+
+
+    private String getPublicKey(String server, String apiCall) {
+        StringBuilder result = new StringBuilder();
+        URL url = null;
+        try {
+            url = new URL(server + "/" + apiCall);
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setHostnameVerifier(new AllowAllHostnameVerifier());
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+
+            InputStream inputStream = conn.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                result.append(line);
+            }
+
+            conn.disconnect();
+
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return result.toString();
+    }
+
 }

@@ -2,12 +2,18 @@ package com.example.mobilecomms;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -83,9 +89,34 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         return stringBuilder.toString();
     }
 
+    public void getPublicKey(View view) {
+        Button button = findViewById(R.id.btnGetKey);
+        button.setEnabled(false);
+
+        String url = localHost + "/" + ApiEndPoints.GET_PUBLIC_KEY;
+        new HttpRequestTask(this).execute(url, ApiEndPoints.GET_PUBLIC_KEY);
+
+        new Handler().postDelayed(() -> button.setEnabled(true), 2000);
+    }
+
+
+
     @Override
     public void receivePublicKey(String encodedKey) {
+        try {
+            JSONObject jsonResponse = new JSONObject(encodedKey);
+            String encodedPublicKey = jsonResponse.getString("publicKey");
 
+            Log.d("MainActivity", "Received server public key: " + encodedPublicKey);
+
+            byte[] decodedKey = Base64.decode(encodedPublicKey, Base64.DEFAULT);
+            KeyFactory keyFactory = KeyFactory.getInstance("EC");
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decodedKey);
+            PublicKey serverPublicKey = keyFactory.generatePublic(keySpec);
+
+        } catch (JSONException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
