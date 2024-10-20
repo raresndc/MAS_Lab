@@ -151,9 +151,9 @@ public class HttpRequestTask extends AsyncTask<String, Void, String> {
 
     private String getPublicKey(String server, String apiCall) {
         StringBuilder result = new StringBuilder();
-        URL url = null;
         try {
-            url = new URL(server + "/" + apiCall);
+            // Ensure the URL is constructed correctly
+            URL url = new URL(server + apiCall);
             HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
             conn.setHostnameVerifier(new AllowAllHostnameVerifier());
             conn.setRequestMethod("GET");
@@ -167,12 +167,13 @@ public class HttpRequestTask extends AsyncTask<String, Void, String> {
                 result.append(line);
             }
 
+            bufferedReader.close(); // Ensure resources are closed
             conn.disconnect();
 
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Malformed URL: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IO Exception: " + e.getMessage(), e);
         }
         return result.toString();
     }

@@ -93,7 +93,8 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         Button button = findViewById(R.id.btnGetKey);
         button.setEnabled(false);
 
-        String url = localHost + "/" + ApiEndPoints.GET_PUBLIC_KEY;
+        String url = localHost+ "/";
+//        + ApiEndPoints.GET_PUBLIC_KEY;
         new HttpRequestTask(this).execute(url, ApiEndPoints.GET_PUBLIC_KEY);
 
         new Handler().postDelayed(() -> button.setEnabled(true), 2000);
