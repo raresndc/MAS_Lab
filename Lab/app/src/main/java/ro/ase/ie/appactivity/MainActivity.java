@@ -10,6 +10,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
+
+    public MainActivity() {
+        registerActivityLifecycleCallbacks(new MyApp());
+    }
     private String ActivityTag = "ActivityTag";
 
     @Override
